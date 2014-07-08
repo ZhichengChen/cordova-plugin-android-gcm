@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+           id="org.apache.cordova.gcm"
+      version="0.0.1">
+
+    <name>Android GCM</name>
+    <description>Cordova Android GCM Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,android,gcm</keywords>
+    <repo>https://github.com/ZhichengChen/cordova-plugin-android-gcm.git</repo>
+    <issue>https://github.com/ZhichengChen/cordova-plugin-android-gcm/issues</issue>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="Gcm">
+                <param name="android-package" value="org.apache.cordova.Gcm.start"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/Gcm.java" target-dir="src/com/sqisland/gcm_client" />
+        <source-file src="src/android/Constants.java" target-dir="src/com/sqisland/gcm_client" />
+        <source-file src="src/android/GCMIntentService.java" target-dir="src/com/sqisland/gcm_client" />
+        <source-file src="src/android/gcm.jar" target-dir="libs/" />
+    </platform>
+
+</plugin>
