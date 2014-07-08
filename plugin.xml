@@ -11,6 +11,9 @@
     <repo>https://github.com/ZhichengChen/cordova-plugin-android-gcm.git</repo>
     <issue>https://github.com/ZhichengChen/cordova-plugin-android-gcm/issues</issue>
 
+    <js-module src="www/gcm.js" name="Gcm">
+        <clobbers target="plugin.gcm" />
+    </js-module>
     <!-- android -->
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">

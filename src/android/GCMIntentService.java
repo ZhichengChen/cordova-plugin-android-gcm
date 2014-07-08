@@ -2,6 +2,7 @@ package com.sqisland.android.gcm_client;
 
 import com.google.android.gcm.GCMBaseIntentService;
 
+import android.R;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -31,16 +32,16 @@ public class GCMIntentService extends GCMBaseIntentService {
     NotificationManager manager = (NotificationManager) context
         .getSystemService(Context.NOTIFICATION_SERVICE);
     Notification notification = prepareNotification(context, msg);
-    manager.notify(R.id.notification_id, notification);
+    manager.notify(1, notification);
   }
 
   private Notification prepareNotification(Context context, String msg) {
     long when = System.currentTimeMillis();
-    Notification notification = new Notification(R.drawable.ic_stat_cloud, msg,
+    Notification notification = new Notification(R.drawable.ic_dialog_alert, msg,
         when);
     notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
-    Intent intent = new Intent(context, MessageActivity.class);
+    Intent intent = new Intent(context, com.sqisland.android.gcm_client.Gcm.class);
     // Set a unique data uri for each notification to make sure the activity
     // gets updated
     intent.setData(Uri.parse(msg));
@@ -49,7 +50,7 @@ public class GCMIntentService extends GCMBaseIntentService {
         | Intent.FLAG_ACTIVITY_CLEAR_TASK);
     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
         0);
-    String title = context.getString(R.string.app_name);
+    String title = "GCM Sample Client";
     notification.setLatestEventInfo(context, title, msg, pendingIntent);
 
     return notification;

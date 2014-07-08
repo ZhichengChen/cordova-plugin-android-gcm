@@ -21,16 +21,16 @@ package com.sqisland.android.gcm_client;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-
+import org.json.JSONObject;
 import android.content.Intent;
 import android.util.Log;
-
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CordovaWebView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
@@ -40,65 +40,76 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-
 import com.google.android.gcm.GCMRegistrar;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 
 public class Gcm extends CordovaPlugin {
 
     private static final String LOG_TAG = "GcmPlugin";
-    private GCMReceiver mGCMReceiver;
-    private IntentFilter mOnRegisteredFilter;
-    private TextView mStatus;
+    private static GCMReceiver mGCMReceiver;
+    private static IntentFilter mOnRegisteredFilter;
+    private static TextView mStatus;
 
     private static String sender_id = null;
     private static String server_url = null;
+    protected static Context context = null;
+    private   static CordovaWebView webView = null;
 
     @Override
-    public boolean execute(String action, JSONArray args, CallbackContext command) throws JSONException {
+    public void initialize (CordovaInterface cordova, CordovaWebView webView) {
+        super.initialize(cordova, webView);
+
+        Gcm.webView = super.webView;
+        Gcm.context = super.cordova.getActivity().getApplicationContext();
+    }
+    
+    @Override
+    public boolean execute(String action, final JSONArray args, final CallbackContext command) throws JSONException {
         if ("start".equals(action)) {
           cordova.getThreadPool().execute( new Runnable() {
               public void run() {
-                JSONObject arguments = args.optJSONObject(0);
-                Options options      = new Options(context).parse(arguments);
-                start(options, true);
+                try {
+          start(args.getString(0), args.getString(1), true);
+        } catch (JSONException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
                 command.success();
               }
           });
         }
+        return true;
     }
 
-    public static void start(Options options, boolean doFireEvent) {
+    public void start(String sender_id, String sever_url, boolean doFireEvent) {
         mGCMReceiver = new GCMReceiver();
         mOnRegisteredFilter = new IntentFilter();
         mOnRegisteredFilter.addAction(Constants.ACTION_ON_REGISTERED);
 
-        sender_id = options.getJSON().project_num;
-        server_url = options.getJSON().server_url;
+        sender_id = sender_id;
+        server_url = sever_url;
 
-        GCMRegistrar.checkDevice(this);
-        GCMRegistrar.checkManifest(this);
-        final String regId = GCMRegistrar.getRegistrationId(this);
+        GCMRegistrar.checkDevice(context);
+        GCMRegistrar.checkManifest(context);
+        final String regId = GCMRegistrar.getRegistrationId(context);
         if (!regId.equals("")) {
           sendIdToServer(regId);
         } else {
-          GCMRegistrar.register(this, sender_id);
+          GCMRegistrar.register(context, sender_id);
         }
     }
 
-    private void sendIdToServer(String regId) {
-      String status = getString(R.string.gcm_registration, regId);
+    private static void sendIdToServer(String regId) {
+      String status = "Got id from Google: " + regId;
       mStatus.setText(status);
-      (new SendRegistrationIdTask(regId)).execute();
+      //TODO register id
+//      (new SendRegistrationIdTask(regId)).execute();
     }
 
     private class GCMReceiver extends BroadcastReceiver {
@@ -151,7 +162,7 @@ public class Gcm extends CordovaPlugin {
         return;
       }
 
-      String status = getString(R.string.server_registration, mRegId);
+      String status = "Sent id to server: " + mRegId;
       mStatus.setText(status);
     }
   }
