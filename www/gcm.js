@@ -35,6 +35,6 @@ module.exports = {
      * @param {Function} completeCallback   The callback that is called when user clicks on a button.
      */
     start: function(server_url, project_num, successCallback, errorCallback) {
-        exec(successCallback, [server_url, project_num], 'Gcm', 'start', [successCallback, errorCallback]);
+        exec(successCallback, null, 'Gcm', 'start', [server_url, project_num]);
     }
 };
