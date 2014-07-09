@@ -23,7 +23,7 @@ var exec = require('cordova/exec');
 var platform = require('cordova/platform');
 
 /**
- * Provides access to home function on the device.
+ * Provides 
  */
 
 module.exports = {
@@ -34,7 +34,7 @@ module.exports = {
      * @param {Function} completeCallback   The callback that is called when user clicks on a button.
      * @param {Function} completeCallback   The callback that is called when user clicks on a button.
      */
-    start: function(server_url, project_num, successCallback, errorCallback) {
+    start: function(server_url, project_num, successCallback) {
         exec(successCallback, null, 'Gcm', 'start', [server_url, project_num]);
     }
 };

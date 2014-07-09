@@ -21,7 +21,6 @@ package com.sqisland.android.gcm_client;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import android.content.Intent;
 import android.util.Log;
 import org.apache.cordova.CallbackContext;
@@ -41,10 +40,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import com.google.android.gcm.GCMRegistrar;
+
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.widget.TextView;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -54,11 +51,11 @@ public class Gcm extends CordovaPlugin {
     private static final String LOG_TAG = "GcmPlugin";
     private static GCMReceiver mGCMReceiver;
     private static IntentFilter mOnRegisteredFilter;
-    private static TextView mStatus;
 
     private static String sender_id = null;
     private static String server_url = null;
     protected static Context context = null;
+    private static CallbackContext command = null;
     private   static CordovaWebView webView = null;
 
     @Override
@@ -70,30 +67,29 @@ public class Gcm extends CordovaPlugin {
     }
     
     @Override
-    public boolean execute(String action, final JSONArray args, final CallbackContext command) throws JSONException {
+    public boolean execute(String action, final JSONArray args, final CallbackContext command_para) throws JSONException {
         if ("start".equals(action)) {
+          command = command_para;
           cordova.getThreadPool().execute( new Runnable() {
               public void run() {
                 try {
-          start(args.getString(0), args.getString(1), true);
-        } catch (JSONException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-                command.success();
+              start(args.getString(1), args.getString(0));
+            } catch (JSONException e) {
+              command.success();
+            }
               }
           });
         }
         return true;
     }
 
-    public void start(String sender_id, String sever_url, boolean doFireEvent) {
+    public void start(String sender_id_para, String sever_url_para) {
         mGCMReceiver = new GCMReceiver();
         mOnRegisteredFilter = new IntentFilter();
         mOnRegisteredFilter.addAction(Constants.ACTION_ON_REGISTERED);
 
-        sender_id = sender_id;
-        server_url = sever_url;
+        sender_id = sender_id_para;
+        server_url = sever_url_para;
 
         GCMRegistrar.checkDevice(context);
         GCMRegistrar.checkManifest(context);
@@ -107,8 +103,9 @@ public class Gcm extends CordovaPlugin {
 
     private static void sendIdToServer(String regId) {
       String status = "Got id from Google: " + regId;
-      mStatus.setText(status);
-      //TODO register id
+      
+      Log.i("ERROR", status);
+      command.success(regId);
 //      (new SendRegistrationIdTask(regId)).execute();
     }
 
@@ -158,12 +155,12 @@ public class Gcm extends CordovaPlugin {
       StatusLine httpStatus = response.getStatusLine();
       if (httpStatus.getStatusCode() != 200) {
         Log.e(Constants.TAG, "Status: " + httpStatus.getStatusCode());
-        mStatus.setText(httpStatus.getReasonPhrase());
+        Log.i("ERROR",httpStatus.getReasonPhrase());
         return;
       }
 
       String status = "Sent id to server: " + mRegId;
-      mStatus.setText(status);
+      Log.i("ERROR", status);
     }
   }
 }
