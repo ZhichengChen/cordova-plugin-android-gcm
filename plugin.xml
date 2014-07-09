@@ -26,6 +26,7 @@
         <source-file src="src/android/Constants.java" target-dir="src/com/sqisland/android/gcm_client" />
         <source-file src="src/android/GCMIntentService.java" target-dir="src/com/sqisland/android/gcm_client" />
         <source-file src="src/android/gcm.jar" target-dir="libs/" />
+
         <config-file target="AndroidManifest.xml" parent="/manifest">
             <uses-permission android:name="android.permission.INTERNET" />
             <permission android:name=".permission.C2D_MESSAGE" android:protectionLevel="signature" />
@@ -37,6 +38,28 @@
             <uses-permission android:name="android.permission.VIBRATE" />
             <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
             <uses-permission android:name="android.permission.GET_TASKS" />
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <permission android:name=".permission.C2D_MESSAGE" android:protectionLevel="signature" />
+            <uses-permission android:name=".permission.C2D_MESSAGE" />
+            <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+            <uses-permission android:name="android.permission.WAKE_LOCK" />
+            <uses-permission android:name="android.permission.VIBRATE" />
+            <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+            <uses-permission android:name="android.permission.GET_TASKS" />
+            
+            <receiver android:name="com.google.android.gcm.GCMBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="." />
+            </intent-filter>
+            </receiver>
+            <service android:name=".GCMIntentService" />
         </config-file>
     </platform>
 
