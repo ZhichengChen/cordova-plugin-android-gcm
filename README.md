@@ -79,14 +79,16 @@ This is a python example which can run on heorku.
 
 
 ##Usage
- 
- You need to change the value of two variables in Constants.java:
 
-* SENDER_ID: Change this to the **Project Number** from your API project created at Google APIs Console.
-* SERVER_URL: Change this to match your server
+ First copy `src\com.sqisland.android.gcm_client\GCMIntentServices.java` to your project path, for example `src\com.example.hello\GCMIntentServices.java`.
+
+ Then excute as follow in your js file:
+
+    plugin.gcm.start(<change it to your server address>, <change it to your prject number>, function(regId){
+       console.log(regId);
+    });
 
 When the app starts, it checks if is already registered with GCM. If not, it registers the device with GCM, then send the registration id to the server.
-
 
  
 #Support Platforms
